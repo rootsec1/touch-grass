@@ -1,5 +1,17 @@
 # Verification — 2 October 2026
 
+## Public deployment verification
+
+- Native GitHub connections deploy `main` to the personal Railway project and Vercel Hobby project. Verified a pushed commit reached both platforms. Railway waited for the successful GitHub Actions check before releasing the API.
+- CI passes migrations, six package type checks, two integration tests with 35 assertions, and both production builds. CI storage is an isolated S3rver protocol fixture; the deployed Railway bucket was tested separately with actual uploads and reads.
+- On `https://touch-grass-journal.vercel.app`, registered a temporary email/password account, signed in again, imported a photograph, received a real Gemini identification, saved it, followed the tree, and edited its notes. Railway PostgreSQL confirmed the saved fields.
+- Authenticated photo requests returned 200 with `private, no-store`; the same photo returned 401 without a session. The direct and proxied health endpoints both verified database connectivity.
+- Blocked network requests in the page and service workers, reloaded the saved discovery, and confirmed its edited notes and photo remained available while a fresh health request failed. Both landing and app shells are precached. This is a simulated network outage, not a physical-device flight-mode test.
+- Inspected the deployed mobile sign-in and saved discovery. The sign-in accessibility check reported zero violations. Production screenshots are in ignored `artifacts/deploy/`.
+- Production testing found a late session update could restore the local account label after sign-out. The shared session hook now clears that label when the server confirms a signed-out session.
+
+Google OAuth remains intentionally deferred. Native camera, phone installation, and actual OS push delivery still require the physical-device checks listed below.
+
 ## Automated checks
 
 - `bun run check-types`: all six package checks passed.

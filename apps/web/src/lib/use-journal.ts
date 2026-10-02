@@ -43,8 +43,11 @@ export function useUser() {
       } catch {
         setCached(null);
       }
+    } else if (!session.isPending && !session.error) {
+      localStorage.removeItem("touch-grass:user");
+      setCached(null);
     }
-  }, [session.data, unavailable]);
+  }, [session.data, session.isPending, session.error, unavailable]);
   return {
     user: session.data?.user || (unavailable ? cached : null),
     pending: session.isPending && !unavailable,
