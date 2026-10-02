@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@touch-grass/ui/components/button";
 import { Switch } from "@touch-grass/ui/components/switch";
@@ -21,7 +21,6 @@ import { clearAccountCache } from "@/lib/journal";
 export const Route = createFileRoute("/settings")({ component: Settings });
 function Settings() {
   const { user } = useUser();
-  const { refetch: refreshSession } = authClient.useSession();
   const { items } = useJournal();
   const { data: config } = useConfig();
   const online = useOnline();
@@ -31,7 +30,6 @@ function Settings() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const client = useQueryClient();
-  const navigate = useNavigate();
   const supported =
     typeof window !== "undefined" &&
     "PushManager" in window &&
@@ -117,11 +115,11 @@ function Settings() {
       await disableReminders();
       const result = await authClient.signOut();
       if (result.error) throw new Error(result.error.message);
-      await refreshSession();
       if (user) await clearAccountCache(user.id);
       localStorage.removeItem("touch-grass:user");
       client.clear();
-      await navigate({ to: "/" });
+      // Discard mounted session observers along with the signed-out account caches.
+      window.location.replace("/");
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "Couldn't sign out. Try again.",
