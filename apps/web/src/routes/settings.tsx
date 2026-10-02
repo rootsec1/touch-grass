@@ -21,6 +21,7 @@ import { clearAccountCache } from "@/lib/journal";
 export const Route = createFileRoute("/settings")({ component: Settings });
 function Settings() {
   const { user } = useUser();
+  const { refetch: refreshSession } = authClient.useSession();
   const { items } = useJournal();
   const { data: config } = useConfig();
   const online = useOnline();
@@ -116,6 +117,7 @@ function Settings() {
       await disableReminders();
       const result = await authClient.signOut();
       if (result.error) throw new Error(result.error.message);
+      await refreshSession();
       if (user) await clearAccountCache(user.id);
       localStorage.removeItem("touch-grass:user");
       client.clear();
