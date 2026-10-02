@@ -117,3 +117,4 @@ touch-grass/
 ## Better Auth Schema Generation
 
 After changing auth plugins or schema options, run `bun run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+# touch-grass
