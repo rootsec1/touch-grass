@@ -1,0 +1,6 @@
+{
+  "extends": "@touch-grass/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

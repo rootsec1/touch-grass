@@ -1,0 +1,22 @@
+{
+  "name": "@touch-grass/api",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@touch-grass/auth": "workspace:*",
+    "@touch-grass/db": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@touch-grass/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
