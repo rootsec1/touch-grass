@@ -1,0 +1,72 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "bun install --frozen-lockfile",
+  "buildCommand": "bun run --cwd apps/web build",
+  "outputDirectory": "apps/web/dist/client",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "touch-grass-self-gamma.vercel.app" }],
+      "destination": "https://touch-grass-journal.vercel.app/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "touch-grass-abhishek-murthys-projects.vercel.app"
+        }
+      ],
+      "destination": "https://touch-grass-journal.vercel.app/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api-production-5643b.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/trpc/:path*",
+      "destination": "https://api-production-5643b.up.railway.app/trpc/:path*"
+    },
+    {
+      "source": "/healthz",
+      "destination": "https://api-production-5643b.up.railway.app/healthz"
+    },
+    {
+      "source": "/((?!api/|trpc/|assets/|images/|.*\\.).+)",
+      "destination": "/_shell.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/_shell.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [{ "key": "Cache-Control", "value": "private, no-store" }]
+    },
+    {
+      "source": "/trpc/:path*",
+      "headers": [{ "key": "Cache-Control", "value": "private, no-store" }]
+    }
+  ],
+  "git": { "deploymentEnabled": { "main": true, "**": false } }
+}

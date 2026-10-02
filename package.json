@@ -11,14 +11,11 @@
       "typescript": "^6.0.3",
       "@types/bun": "^1.4.2",
       "varlock": "1.18.0",
-      "libsql": "0.5.29",
       "@trpc/server": "^11.18.0",
       "better-auth": "1.7.5",
       "lucide-react": "^1.41.0",
-      "next-themes": "^0.4.6",
       "react": "^19.2.8",
       "react-dom": "^19.2.8",
-      "sonner": "^2.0.8",
       "tailwindcss": "^4.3.3",
       "@trpc/client": "^11.18.0",
       "@types/react": "^19.2.18",
@@ -37,10 +34,11 @@
     "db:studio": "turbo run db:studio -F @touch-grass/db --",
     "db:generate": "turbo run db:generate -F @touch-grass/db --",
     "db:migrate": "turbo run db:migrate -F @touch-grass/db --",
-    "db:local": "turbo run db:local -F @touch-grass/db --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
-    "auth:generate": "cd apps/server && bun run auth:generate"
+    "auth:generate": "cd apps/server && bun run auth:generate",
+    "test": "bun run --cwd apps/server test",
+    "start": "turbo run start"
   },
   "dependencies": {
     "zod": "catalog:"
@@ -48,6 +46,7 @@
   "devDependencies": {
     "@touch-grass/config": "workspace:*",
     "@types/bun": "catalog:",
+    "railway": "3.12.0",
     "turbo": "^2.10.12",
     "typescript": "catalog:",
     "varlock": "catalog:"

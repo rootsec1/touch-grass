@@ -1,13 +1,11 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import postgres from "postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
 
 import type { DatabaseConfig } from "./config";
 import { relations } from "./relations";
 
 export function createDb(env: DatabaseConfig) {
-  const client = createClient({
-    url: env.DATABASE_URL,
-  });
+  const client = postgres(env.DATABASE_URL, { max: 10 });
 
   return drizzle({ client, relations });
 }

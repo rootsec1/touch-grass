@@ -7,6 +7,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        photo: "bg-card aria-pressed:ring-2 aria-pressed:ring-primary",
+        field: "bg-primary text-primary-foreground hover:bg-primary/90",
+        sun: "bg-sunflower text-sunflower-foreground hover:bg-sunflower/80",
+        nav: "text-muted-foreground hover:bg-secondary aria-[current=page]:bg-secondary aria-[current=page]:text-primary",
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
@@ -46,6 +50,8 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
+      data-size={size}
+      data-variant={variant}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

@@ -1,0 +1,58 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: local_dev
+          POSTGRES_PASSWORD: test-only-password
+          POSTGRES_DB: touch_grass
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U local_dev -d touch_grass"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      NODE_ENV: test
+      CI: true
+      DATABASE_URL: postgres://local_dev:test-only-password@localhost:5432/touch_grass
+      BETTER_AUTH_SECRET: ci-only-secret-not-used-in-production-2026
+      BETTER_AUTH_URL: http://localhost:4311
+      CORS_ORIGIN: http://localhost:4311
+      VITE_SERVER_URL: http://localhost:4311
+      S3_URL: http://S3RVER:S3RVER@localhost:9000/touch-grass
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - name: Start isolated S3 test fixture
+        run: |
+          mkdir -p "$RUNNER_TEMP/s3"
+          bunx --bun s3rver@3.7.1 -d "$RUNNER_TEMP/s3" -a 127.0.0.1 -p 9000 --silent > "$RUNNER_TEMP/s3.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/s3.pid"
+          for attempt in $(seq 1 30); do
+            if curl --silent --output /dev/null http://localhost:9000; then exit 0; fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/s3.log"
+          exit 1
+      - run: bun install --frozen-lockfile
+      - run: bun run --cwd packages/db db:migrate
+      - run: bun run check-types
+      - run: bun run test
+      - run: bun run build
+      - name: Stop S3 test fixture
+        if: always()
+        run: test ! -f "$RUNNER_TEMP/s3.pid" || kill "$(cat "$RUNNER_TEMP/s3.pid")" || true

@@ -33,7 +33,7 @@
       "cache": false,
       "persistent": true
     },
-    "db:local": {
+    "start": {
       "cache": false,
       "persistent": true
     }
@@ -50,7 +50,13 @@
     "VERCEL_PROJECT_PRODUCTION_URL",
     "VERCEL_URL",
     "VITE_SERVER_URL",
-    "_VARLOCK_ENV_KEY"
+    "_VARLOCK_ENV_KEY",
+    "GEMINI_API_KEY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "S3_URL",
+    "VAPID_KEYS",
+    "PORT"
   ],
   "globalDependencies": [".env*", "apps/*/.env*", "packages/*/.env*"]
 }

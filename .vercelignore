@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/.turbo
+**/.env
+**/.env.local
+**/.env.*.local
+**/*.log
+artifacts
+.local
+docs

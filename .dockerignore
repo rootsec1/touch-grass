@@ -1,0 +1,14 @@
+.git
+.github
+.vercel
+**/node_modules
+**/dist
+**/.turbo
+**/.env
+**/.env.local
+**/.env.*.local
+**/*.log
+artifacts
+.local
+docs
+apps/web/public

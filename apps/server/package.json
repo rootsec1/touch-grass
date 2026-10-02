@@ -9,23 +9,30 @@
     "dev": "bun run --hot src/index.ts",
     "start": "bun run dist/index.mjs",
     "env:generate": "varlock codegen",
-    "auth:generate": "varlock run -- bun x auth@latest generate --config src/services.ts --output ../../packages/db/src/schema/auth.ts --yes"
+    "auth:generate": "varlock run -- bun x auth@latest generate --config src/services.ts --output ../../packages/db/src/schema/auth.ts --yes",
+    "test": "bun test tests/integration.test.ts",
+    "eval:ai": "bun scripts/eval-ai.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1146.0",
+    "@google/genai": "^2.27.0",
     "@hono/trpc-server": "^0.4.2",
     "@touch-grass/api": "workspace:*",
     "@touch-grass/auth": "workspace:*",
     "@touch-grass/db": "workspace:*",
     "@trpc/server": "catalog:",
     "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
     "hono": "^4.13.7",
-    "libsql": "catalog:",
+    "sharp": "^0.35.5",
     "varlock": "catalog:",
+    "web-push": "^3.6.7",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@touch-grass/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@types/web-push": "^3.6.4",
     "tsdown": "^0.23.0",
     "typescript": "catalog:"
   }

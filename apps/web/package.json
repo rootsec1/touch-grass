@@ -3,15 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "serve": "vite preview",
+    "build": "bun build.ts",
     "dev": "vite dev",
-    "check-types": "vite build && tsc --noEmit",
-    "env:generate": "varlock codegen"
+    "check-types": "bun build.ts && tsc --noEmit",
+    "env:generate": "varlock codegen",
+    "start": "bun server.ts"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
-    "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-query": "^5.102.8",
     "@tanstack/react-router": "^1.170.32",
     "@tanstack/react-router-ssr-query": "^1.167.2",
@@ -20,30 +21,29 @@
     "@touch-grass/ui": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
-    "@trpc/tanstack-react-query": "^11.18.0",
     "@varlock/vite-integration": "1.5.1",
     "better-auth": "catalog:",
+    "idb-keyval": "^6.3.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "catalog:",
-    "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "sonner": "catalog:",
     "tailwindcss": "catalog:",
     "varlock": "catalog:",
+    "workbox-core": "^7.4.1",
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "workbox-window": "^7.4.1",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "^5.102.8",
-    "@tanstack/react-router-devtools": "^1.167.1",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.3",
     "@touch-grass/config": "workspace:*",
+    "@types/leaflet": "^1.9.22",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "^6.1.1",
-    "jsdom": "^30.0.1",
     "typescript": "catalog:",
     "vite": "^8.2.2",
-    "web-vitals": "^6.2.1"
+    "vite-plugin-pwa": "^1.3.0"
   }
 }
