@@ -8,7 +8,8 @@
 - Authenticated photo requests returned 200 with `private, no-store`; the same photo returned 401 without a session. The direct and proxied health endpoints both verified database connectivity.
 - Blocked network requests in the page and service workers, reloaded the saved discovery, and confirmed its edited notes and photo remained available while a fresh health request failed. Both landing and app shells are precached. This is a simulated network outage, not a physical-device flight-mode test.
 - Inspected the deployed mobile sign-in and saved discovery. The sign-in accessibility check reported zero violations. Production screenshots are in ignored `artifacts/deploy/`.
-- Production testing found a late session update could restore the local account label after sign-out. The shared session hook now clears that label when the server confirms a signed-out session.
+- Production testing found a late session update could restore the local account label after sign-out. Sign-out now reloads the public page to discard mounted session observers, and the shared session hook clears the label when the server confirms a signed-out session. Repeated the live sign-in/sign-out journey and verified the server session, cached identity, and private journal/photo caches were empty.
+- Deleted the test discovery through the app, verified its object returned 404 from Railway storage, and removed the temporary QA account. Closed the browser and stopped local verification processes.
 
 Google OAuth remains intentionally deferred. Native camera, phone installation, and actual OS push delivery still require the physical-device checks listed below.
 
