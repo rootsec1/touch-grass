@@ -43,7 +43,11 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Meet a tree. Learn its name. Keep a little of the outside.",
       },
-      { property: "og:image", content: "/images/touch-grass-social.jpg" },
+      {
+        property: "og:image",
+        content: new URL("/images/touch-grass-social.jpg", ENV.VITE_SERVER_URL)
+          .href,
+      },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },

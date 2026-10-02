@@ -1,12 +1,15 @@
 import {
   bucket,
   defineRailway,
+  github,
   postgres,
   preserve,
   project,
   service,
   volume,
 } from "railway/iac";
+
+const origin = "https://touch-grass-journal.vercel.app";
 
 export default defineRailway(() => {
   const Postgres = postgres("Postgres", { region: "us-east4-eqdc4a" });
@@ -22,6 +25,7 @@ export default defineRailway(() => {
   });
   const touchGrass = bucket("touch-grass", { region: "iad" });
   const api = service("api", {
+    source: github("rootsec1/touch-grass", { checkSuites: true }),
     build: {
       buildEnvironment: "V3",
       builder: "DOCKERFILE",
@@ -43,13 +47,14 @@ export default defineRailway(() => {
     deploy: { restartPolicyMaxRetries: 3 },
     env: {
       BETTER_AUTH_SECRET: preserve(),
-      BETTER_AUTH_URL: preserve(),
-      CORS_ORIGIN: preserve(),
-      DATABASE_URL: preserve(),
+      BETTER_AUTH_URL: origin,
+      CORS_ORIGIN: origin,
+      DATABASE_URL: Postgres.env.DATABASE_URL,
       GEMINI_API_KEY: preserve(),
-      NODE_ENV: preserve(),
-      PORT: preserve(),
-      S3_URL: preserve(),
+      NODE_ENV: "production",
+      PORT: "3000",
+      S3_URL:
+        "https://${{touch-grass.ACCESS_KEY_ID}}:${{touch-grass.SECRET_ACCESS_KEY}}@t3.storageapi.dev/${{touch-grass.BUCKET}}?region=auto&style=virtual",
       VAPID_KEYS: preserve(),
     },
   });

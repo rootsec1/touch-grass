@@ -16,7 +16,7 @@ Touch Grass follows the sibling Rounds project's split: Vercel serves the fronte
 
 GitHub Actions runs type checks, builds, migrations, and the auth/journal/storage integration tests on pushes to `main` and on pull requests. CI uses disposable PostgreSQL and an S3rver protocol fixture; production storage is checked separately against Railway. Test credentials in the workflow are disposable and never used in production.
 
-Vercel and Railway use their native GitHub connections. Vercel builds the frontend; Railway builds the API's Dockerfile, runs the checked-in Drizzle migrations, and requires `/healthz` to verify database connectivity before routing traffic. Branch previews are disabled so they do not share production accounts and photos. No deployment tokens are stored in GitHub Actions.
+Vercel and Railway use their native GitHub connections. Vercel builds the frontend immediately. Railway waits for successful CI checks, then builds the API's Dockerfile, runs the checked-in Drizzle migrations, and requires `/healthz` to verify database connectivity before routing traffic. Branch previews are disabled so they do not share production accounts and photos. No deployment tokens are stored in GitHub Actions.
 
 ```sh
 bun install --frozen-lockfile
