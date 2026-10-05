@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { get, set } from "idb-keyval";
+import { cachePhoto, readPhoto } from "@/lib/photo-storage";
 import { cn } from "@touch-grass/ui/lib/utils";
 import { ImageOff } from "lucide-react";
 import { photoUrl } from "@/lib/api";
@@ -30,14 +30,14 @@ export function Photo({
     async function load() {
       let data = blob;
       if (!data && id && user) {
-        data = await get<Blob>(`photo:${user.id}:${id}`);
+        data = await readPhoto(user.id, id);
         if (!data && navigator.onLine) {
           const response = await fetch(photoUrl(id), {
             signal: controller.signal,
           });
           if (!response.ok) throw new Error("Photo unavailable");
           data = await response.blob();
-          if (!disposed) await set(`photo:${user.id}:${id}`, data);
+          if (!disposed) await cachePhoto(user.id, id, data);
         }
       }
       if (!data) throw new Error("Photo not downloaded");

@@ -96,9 +96,12 @@ function Capture() {
     if (next.photos.length || draft.photos.length)
       writeQueue.current = writeQueue.current
         .then(() => saveDraft(next))
-        .catch(() =>
+        .catch((e) =>
           setError(
-            "Device storage is full. Keep this page open and save online.",
+            errorMessage(
+              e,
+              "Couldn't keep your changes on this device. Keep this page open and try again.",
+            ),
           ),
         );
   }
