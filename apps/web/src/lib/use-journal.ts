@@ -33,8 +33,12 @@ export function useUser() {
     if (session.data?.user) {
       const { id, name, email } = session.data.user;
       const user = { id, name, email };
-      localStorage.setItem("touch-grass:user", JSON.stringify(user));
       setCached(user);
+      try {
+        localStorage.setItem("touch-grass:user", JSON.stringify(user));
+      } catch {
+        // Online account access does not require persistent browser storage.
+      }
     } else if (unavailable) {
       try {
         setCached(
@@ -44,8 +48,12 @@ export function useUser() {
         setCached(null);
       }
     } else if (!session.isPending && !session.error) {
-      localStorage.removeItem("touch-grass:user");
       setCached(null);
+      try {
+        localStorage.removeItem("touch-grass:user");
+      } catch {
+        // Storage can be blocked even when authentication is available.
+      }
     }
   }, [session.data, session.isPending, session.error, unavailable]);
   return {

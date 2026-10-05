@@ -81,3 +81,7 @@ The pocket-journal redesign uses original woodland, oak, and fern illustrations.
 Implementation references: [Vite PWA custom worker](https://vite-pwa-org.netlify.app/guide/inject-manifest), [Web Push subscription API](https://developer.mozilla.org/en-US/docs/Web/API/PushManager/subscribe). Design references are linked in DESIGN.md.
 
 The public marketing homepage is `/`; open `/explore` for the compact journal. Sign-in links use `/login?mode=signin`, while journal-start links use signup mode. Installed PWAs start at `/explore`. Landing art and the 1200 × 630 social-sharing image are in `apps/web/public/images/`; the campaign's composition and reference links are documented in `DESIGN.md`.
+
+### Public search and link previews
+
+`apps/web/src/lib/seo.ts` owns the canonical public origin and shared social metadata. It deliberately does not use the API URL or preview host. The build prerenders the homepage and field notes and generates `sitemap.xml` and `robots.txt` from the guide inventory. Vercel serves each field note's generated HTML before the private app fallback. The default app shell is `noindex`; public pages explicitly opt into indexing. The existing illustrated share image is a public 1200 × 630 JPEG. Social platforms may retain older previews until they recrawl a link.

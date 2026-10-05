@@ -1,3 +1,4 @@
+import { guides } from "./src/lib/guides";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import { varlockVitePlugin } from "@varlock/vite-integration";
@@ -29,7 +30,9 @@ export default defineConfig({
         crawlLinks: false,
         failOnError: true,
       },
-      pages: [{ path: "/", prerender: { enabled: true } }],
+      pages: ["/", ...guides.map((guide) => `/guide/${guide.slug}`)].map(
+        (path) => ({ path, prerender: { enabled: true } }),
+      ),
     }),
     viteReact(),
     VitePWA({

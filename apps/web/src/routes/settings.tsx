@@ -15,9 +15,9 @@ import { Download, Bell, LogOut, Share, PlusSquare, Leaf } from "lucide-react";
 import { PageHeading, ErrorState } from "@/components/page";
 import { useUser, useConfig, useJournal, useOnline } from "@/lib/use-journal";
 import { usePwa } from "@/lib/pwa";
-import { authClient } from "@/lib/auth-client";
 import { api } from "@/lib/api";
-import { clearAccountCache } from "@/lib/journal";
+import { disableReminders, getPushManager } from "@/lib/notifications";
+import { signOutAccount } from "@/lib/sign-out";
 export const Route = createFileRoute("/settings")({ component: Settings });
 function Settings() {
   const { user } = useUser();
@@ -30,31 +30,24 @@ function Settings() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const client = useQueryClient();
-  const supported =
-    typeof window !== "undefined" &&
-    "PushManager" in window &&
-    "Notification" in window;
+  const [supported, setSupported] = useState(false);
   useEffect(() => {
-    if (!user || !supported) return;
-    void navigator.serviceWorker
-      .getRegistration()
-      .then(async (reg) => {
-        const sub = await reg?.pushManager.getSubscription();
-        setPush(
-          Boolean(sub) &&
-            (await api.notifications.status.query({ endpoint: sub!.endpoint })),
-        );
+    let active = true;
+    void getPushManager()
+      .then(async (manager) => {
+        if (!active) return;
+        setSupported(Boolean(manager) && "Notification" in window);
+        const sub = user && (await manager?.getSubscription());
+        const enabled = sub
+          ? await api.notifications.status.query({ endpoint: sub.endpoint })
+          : false;
+        if (active) setPush(enabled);
       })
       .catch(() => {});
-  }, [user?.id, supported]);
-  async function disableReminders() {
-    const reg = await navigator.serviceWorker?.getRegistration();
-    const sub = await reg?.pushManager.getSubscription();
-    if (sub) {
-      await api.notifications.unsubscribe.mutate({ endpoint: sub.endpoint });
-      await sub.unsubscribe();
-    }
-  }
+    return () => {
+      active = false;
+    };
+  }, [user?.id, pwa.offlineReady]);
   async function reminders(enabled: boolean) {
     setBusy(true);
     setError("");
@@ -64,24 +57,26 @@ function Settings() {
         setPush(false);
         return;
       }
+      if (!supported || !("Notification" in window))
+        throw new Error(
+          "Reminders aren't available in this browser. On iPhone, open Touch Grass from your home screen.",
+        );
       if (!config?.pushKey)
         throw new Error("Reminders aren't configured on this server yet.");
       if ((await Notification.requestPermission()) !== "granted")
         throw new Error(
           "Notifications aren't allowed. You can enable them in your browser's site settings.",
         );
-      const reg = await navigator.serviceWorker.getRegistration();
-      if (!reg?.active)
-        throw new Error(
-          "The app is still getting ready. Reload and try again.",
-        );
+      const manager = await getPushManager();
+      if (!manager)
+        throw new Error("Reminders aren’t ready. Please reload and try again.");
       const key = Uint8Array.from(
         atob(config.pushKey.replace(/-/g, "+").replace(/_/g, "/")),
         (c) => c.charCodeAt(0),
       );
       const sub =
-        (await reg.pushManager.getSubscription()) ||
-        (await reg.pushManager.subscribe({
+        (await manager.getSubscription()) ||
+        (await manager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: key,
         }));
@@ -111,19 +106,14 @@ function Settings() {
   }
   async function signOut() {
     setBusy(true);
+    setError("");
     try {
-      await disableReminders();
-      const result = await authClient.signOut();
-      if (result.error) throw new Error(result.error.message);
-      if (user) await clearAccountCache(user.id);
-      localStorage.removeItem("touch-grass:user");
+      await signOutAccount(user?.id);
       client.clear();
       // Discard mounted session observers along with the signed-out account caches.
       window.location.replace("/");
-    } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Couldn't sign out. Try again.",
-      );
+    } catch {
+      setError("Couldn’t sign out. Check your connection and try again.");
     } finally {
       setBusy(false);
     }

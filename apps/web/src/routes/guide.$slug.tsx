@@ -1,8 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@touch-grass/ui/components/button";
 import { ArrowLeft, Camera } from "lucide-react";
+import { publicPageHead } from "@/lib/seo";
 import { guides } from "@/lib/guides";
-export const Route = createFileRoute("/guide/$slug")({ component: Guide });
+export const Route = createFileRoute("/guide/$slug")({
+  head: ({ params }) => {
+    const guide = guides.find((item) => item.slug === params.slug);
+    return guide
+      ? publicPageHead(
+          `/guide/${guide.slug}`,
+          `${guide.title} — Touch Grass`,
+          guide.description,
+        )
+      : {};
+  },
+  component: Guide,
+});
 function Guide() {
   const { slug } = Route.useParams();
   const guide = guides.find((g) => g.slug === slug);

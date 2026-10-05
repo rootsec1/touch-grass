@@ -37,7 +37,7 @@
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "auth:generate": "cd apps/server && bun run auth:generate",
-    "test": "bun run --cwd apps/server test",
+    "test": "bun run --cwd apps/web test && bun run --cwd apps/server test",
     "start": "turbo run start"
   },
   "dependencies": {
