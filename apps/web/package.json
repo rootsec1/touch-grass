@@ -7,7 +7,8 @@
     "dev": "vite dev",
     "check-types": "bun build.ts && tsc --noEmit",
     "env:generate": "varlock codegen",
-    "start": "bun server.ts"
+    "start": "bun server.ts",
+    "test": "bun test tests"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",

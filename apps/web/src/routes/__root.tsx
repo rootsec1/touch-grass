@@ -29,6 +29,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         content:
           "Meet the trees around you. Identify plants, keep a private nature journal, and watch your discoveries change with the seasons.",
       },
+      { name: "robots", content: "noindex, follow" },
       { name: "theme-color", content: "#445b35" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
     ],

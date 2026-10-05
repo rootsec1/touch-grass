@@ -26,6 +26,10 @@
       "destination": "https://api-production-5643b.up.railway.app/healthz"
     },
     {
+      "source": "/guide/:slug",
+      "destination": "/guide/:slug/index.html"
+    },
+    {
       "source": "/((?!api/|trpc/|assets/|images/|.*\\.).+)",
       "destination": "/_shell.html"
     }

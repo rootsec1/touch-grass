@@ -24,36 +24,33 @@ import {
 import { Brand } from "@/components/brand";
 import { guides } from "@/lib/guides";
 import landingCss from "../landing.css?url";
-import { ENV } from "../env";
+import { publicPageHead, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Touch Grass — There's a whole world outside." },
-      {
-        name: "description",
-        content:
-          "A pocket field journal for a life a little more outside. Identify trees and plants, collect your discoveries, and get to know the nature around you.",
-      },
-      {
-        property: "og:title",
-        content: "Touch Grass — Wonder is right outside.",
-      },
-      {
-        property: "og:description",
-        content: "Meet a tree. Learn its name. Keep a little of the outside.",
-      },
-      {
-        property: "og:image",
-        content: new URL("/images/touch-grass-social.jpg", ENV.VITE_SERVER_URL)
-          .href,
-      },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "stylesheet", href: landingCss }],
-  }),
+  head: () => {
+    const head = publicPageHead(
+      "/",
+      "Touch Grass — Wonder is right outside.",
+      "A pocket field journal for a life a little more outside. Identify trees and plants, keep your discoveries, and get to know the nature around you.",
+    );
+    return {
+      ...head,
+      links: [...head.links, { rel: "stylesheet", href: landingCss }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Touch Grass",
+            url: SITE_URL,
+            description:
+              "A private pocket field journal for identifying trees and plants and revisiting discoveries through the seasons.",
+          }),
+        },
+      ],
+    };
+  },
   component: Landing,
 });
 
