@@ -4,7 +4,7 @@ Touch Grass follows the sibling Rounds project's split: Vercel serves the fronte
 
 | Resource | Location |
 | --- | --- |
-| App | https://touch-grass-journal.vercel.app |
+| App | https://touch-grass.abhishekmurthy.com |
 | GitHub | https://github.com/rootsec1/touch-grass, branch `main` |
 | Vercel | `touch-grass` in the Hobby scope `abhishek-murthys-projects` |
 | Railway | `touch-grass` in `Personal Projects`, production environment |
@@ -43,6 +43,8 @@ railway config apply
 Database and bucket credentials use Railway variable references. The S3 connection remains one `S3_URL`, with `?region=auto&style=virtual` for Railway's virtual-hosted bucket addressing. Local MinIO keeps its existing path-style URL. The Gemini key comes from the configured server key; production auth and VAPID keys are generated separately and remain in Railway. Do not rotate them during normal releases.
 
 Only the public `VITE_SERVER_URL` is configured on Vercel. `BETTER_AUTH_URL` and `CORS_ORIGIN` on Railway match the canonical frontend origin. Google OAuth remains deferred and is hidden until its two credentials are configured.
+
+The custom domain is the only attached Vercel project domain. The old `touch-grass-journal.vercel.app` and `touch-grass-self-gamma.vercel.app` domains are retired. Generated deployment URLs redirect to the custom domain through one host rule in `vercel.json`. Keep the Railway API domain: Vercel's same-origin API rewrites depend on it. Changing the public origin requires updating both Railway origin variables, Vercel's public origin variable, and the checked-in domain rule, then deploying both apps. Existing accounts and server-side journals remain intact; browser sessions, offline drafts, installed PWAs, and push permissions are scoped to their original origin.
 
 The local database and MinIO data are not copied to production. Production begins with an empty journal. `/healthz` checks the database; verify a real authenticated photo upload after storage changes. Platform rollback does not undo database migrations.
 

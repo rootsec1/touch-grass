@@ -7,19 +7,8 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "touch-grass-self-gamma.vercel.app" }],
-      "destination": "https://touch-grass-journal.vercel.app/:path*",
-      "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "touch-grass-abhishek-murthys-projects.vercel.app"
-        }
-      ],
-      "destination": "https://touch-grass-journal.vercel.app/:path*",
+      "missing": [{ "type": "host", "value": "touch-grass.abhishekmurthy.com" }],
+      "destination": "https://touch-grass.abhishekmurthy.com/:path*",
       "permanent": true
     }
   ],

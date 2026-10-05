@@ -2,7 +2,7 @@
 
 A mobile-first PWA for getting to know the trees and plants around you. Take up to three photographs, ask Gemini for a cautious identification, and keep a private field journal. Return to the same tree, follow its seasons, and build a map of familiar places.
 
-Live app: https://touch-grass-journal.vercel.app. [Deployment and CI](docs/deployment.md) documents the personal Railway/Vercel projects and release flow.
+Live app: https://touch-grass.abhishekmurthy.com. [Deployment and CI](docs/deployment.md) documents the personal Railway/Vercel projects and release flow.
 
 ## Run locally
 

@@ -9,7 +9,7 @@ import {
   volume,
 } from "railway/iac";
 
-const origin = "https://touch-grass-journal.vercel.app";
+const origin = "https://touch-grass.abhishekmurthy.com";
 
 export default defineRailway(() => {
   const Postgres = postgres("Postgres", { region: "us-east4-eqdc4a" });
