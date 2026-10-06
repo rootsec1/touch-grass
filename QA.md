@@ -98,3 +98,16 @@ The iPhone report exposed a missing Push API on a valid service-worker registrat
 Physical iOS camera capture, OS installation and push delivery remain unverified; Google OAuth remains intentionally deferred. Platform-specific social preview caches and search rankings cannot be validated before merge/deployment and recrawling.
 
 Final checks: `bun run check-types`, `bun run build`, `bun run test` (11 tests / 53 assertions) and `git diff --check` passed. Repeated the denied-local-storage browser case on the final production build: Settings and Sign out remained usable. Deleted the temporary discovery through the confirmation dialog and verified both photo endpoints return 404.
+
+## iPhone photo persistence — October 5, 2026
+
+The reported camera and library failures were investigated through read-only Railway account/session queries and API logs. The affected account had iPhone Safari sessions but no uploaded photos or discoveries. No account data was changed.
+
+- Reproduced the exact “Couldn't read this photograph” message in real WebKit with an ordinary application image. Image decoding succeeded; saving the draft failed. Direct IndexedDB probes accepted text and ArrayBuffer records but rejected Blob records through `idb-keyval` with a null error. This explains the misleading image-reading fallback before any upload.
+- Drafts and private downloaded photos now share one bytes/MIME codec. Existing Blob records remain readable and are converted on their next write. Genuine draft-storage failures now produce a persistence error and preserve the previous stored draft.
+- Four new regression tests cover byte/MIME round trips, draft metadata, legacy records, account isolation, sign-out cache cleanup, and failed writes. Web test files run with Bun's module isolation so their mocks cannot affect other suites.
+- On the local production web build in WebKit at iPhone dimensions, exercised both photo inputs, a two-photo draft restored after reload, guest draft claiming after email/password signup, actual MinIO uploads and PostgreSQL saves, both saved photos after reload, discovery deletion, and sign-out. No page errors were recorded; the saved-entry screen was visually inspected.
+- Cached photos remained visible with the browser context offline. WebKit reported an internal navigation error during the offline reload, so this pass does not establish a clean full offline navigation. The binary-storage round trips and online reloads passed independently.
+- `bun run check-types`, `bun run build`, `bun run test` (15 tests / 72 assertions), and `git diff --check` passed. Temporary local accounts, discoveries, and stored objects were removed after verification.
+
+The T3 browser reported unavailable, so this pass used an isolated WebKit browser. File inputs were populated programmatically; physical iPhone camera/library pickers and the affected phone's storage state still need a device retest after deployment. No image-decoder dependency, server change, or database migration was added.

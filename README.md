@@ -56,6 +56,7 @@ Generate VAPID keys from `apps/server` with `bun -e 'console.log(require("web-pu
 - Gentle challenges derived from actual journal data, field notes, and private journal JSON export.
 - Installable manifest, maskable icons, app shortcuts, safe-area navigation, self-hosted fonts, reduced motion, and an update prompt in Settings.
 - Precached app shell and routes. IndexedDB stores drafts and downloaded journal/photos per account. Failed saves remain recoverable; explicit sync is idempotent. Signing out clears downloaded account data while retaining that account's unsynced drafts.
+- The shared photo-storage helper persists image bytes and MIME types instead of Blobs, avoiding WebKit Blob-storage failures. Existing Blob drafts and downloaded photos remain readable; no local database reset is needed.
 - Opt-in Web Push, subscription cleanup, test reminders, and a server scheduler for followed discoveries, at most once per two weeks per device. Unsubscribing affects the current device.
 
 ## Boundaries

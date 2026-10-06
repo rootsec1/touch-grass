@@ -2,6 +2,12 @@ import { entries, get, set, del } from "idb-keyval";
 import type { Identification } from "@touch-grass/api/domain";
 import { MAX_PHOTOS, stages } from "@touch-grass/api/domain";
 import { api, uploadPhoto, type JournalEntry } from "./api";
+import {
+  cachePhoto,
+  encodePhoto,
+  decodePhoto,
+  type PersistedPhoto,
+} from "./photo-storage";
 
 export interface Draft {
   id: string;
@@ -18,6 +24,18 @@ export interface Draft {
   stage: (typeof stages)[number];
   observedAt: string;
   discoveryId?: string;
+}
+type StoredDraft = Omit<Draft, "photos"> & {
+  photos: { id: string; blob: PersistedPhoto }[];
+};
+function decodeDraft(draft: StoredDraft): Draft {
+  return {
+    ...draft,
+    photos: draft.photos.map((photo) => ({
+      ...photo,
+      blob: decodePhoto(photo.blob),
+    })),
+  };
 }
 export const newDraft = (
   owner: string | null,
@@ -39,18 +57,39 @@ export const newDraft = (
   discoveryId,
 });
 export async function getDrafts(owner: string | null) {
-  return (await entries<string, Draft>())
+  return (await entries<string, StoredDraft>())
     .filter(
       ([key, value]) =>
         key.startsWith("draft:") &&
         (value.owner === owner || value.owner === null),
     )
-    .map(([, value]) => value)
+    .map(([, value]) => decodeDraft(value))
     .sort((a, b) => b.observedAt.localeCompare(a.observedAt));
 }
-export const saveDraft = (draft: Draft) => set(`draft:${draft.id}`, draft);
+export async function saveDraft(draft: Draft) {
+  try {
+    const stored: StoredDraft = {
+      ...draft,
+      photos: await Promise.all(
+        draft.photos.map(async (photo) => ({
+          ...photo,
+          blob: await encodePhoto(photo.blob),
+        })),
+      ),
+    };
+    await set(`draft:${draft.id}`, stored);
+  } catch (cause) {
+    throw new Error(
+      "Couldn't save this draft on your device. Check available storage and try again.",
+      { cause },
+    );
+  }
+}
 export const removeDraft = (id: string) => del(`draft:${id}`);
-export const readDraft = (id: string) => get<Draft>(`draft:${id}`);
+export async function readDraft(id: string) {
+  const draft = await get<StoredDraft>(`draft:${id}`);
+  return draft ? decodeDraft(draft) : undefined;
+}
 export const cacheJournal = (userId: string, data: JournalEntry[]) =>
   set(`journal:${userId}`, data);
 export const readJournal = (userId: string) =>
@@ -91,9 +130,7 @@ export async function syncDraft(draft: Draft, userId: string) {
     }
     // Retain private photos locally for offline journal reading. The HTTP cache never stores them.
     await Promise.all(
-      claimed.photos.map((photo) =>
-        set(`photo:${userId}:${photo.id}`, photo.blob),
-      ),
+      claimed.photos.map((photo) => cachePhoto(userId, photo.id, photo.blob)),
     );
     await removeDraft(claimed.id);
   };
